@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from datetime import datetime
 from numpy.core.fromnumeric import sort
 import pandas as pd
+import json
 
 from pm25 import get_pm25
 
@@ -59,6 +60,20 @@ def pm25():
     if request.method == 'POST':
         columns, values, update_time = get_pm25(sort)
     return render_template('./pm25.html', columns=columns, values=values, update_time=update_time)
+
+
+@app.route('/pm25-charts', methods=['GET', 'POST'])
+def pm25_charts():
+    return render_template('./pm25-charts.html')
+
+
+@app.route('/pm25-data', methods=['GET', 'POST'])
+def pm25_data():
+    columns, values, update_time = get_pm25()
+    site = [data[0] for data in values]
+    pm25 = [data[2] for data in values]
+    data = {'site': site, 'pm25': pm25}
+    return json.dumps(data, ensure_ascii=False)
 
 
 if __name__ == '__main__':
