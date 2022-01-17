@@ -4,7 +4,7 @@ from numpy.core.fromnumeric import sort
 import pandas as pd
 import json
 
-from pm25 import get_pm25, get_six_pm25, get_county_pm25
+from pm25 import get_county, get_pm25, get_six_pm25, get_county_pm25
 
 app = Flask(__name__)
 
@@ -64,7 +64,8 @@ def pm25():
 
 @app.route('/pm25-charts', methods=['GET', 'POST'])
 def pm25_charts():
-    return render_template('./pm25-charts.html')
+    countys = get_county()
+    return render_template('./pm25-charts.html', countys=countys)
 
 
 @app.route('/pm25-data', methods=['GET', 'POST'])
@@ -87,12 +88,12 @@ def six_pm25():
     return json.dumps(data, ensure_ascii=False)
 
 
-@app.route('/county-pm25/<string:county>')
+@app.route('/county-pm25/<string:county>', methods=['GET', 'POST'])
 def get_county_pm25_json(county):
     datas = get_county_pm25(county)
     sites = [data[0] for data in datas]
     pm25 = [data[-1] for data in datas]
-    data = {'sites': sites, 'pm25': pm25}
+    data = {'title': county, 'sites': sites, 'pm25': pm25}
     return json.dumps(data, ensure_ascii=False)
 
 

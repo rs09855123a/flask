@@ -29,4 +29,9 @@ def get_county_pm25(county):
     return df.groupby('county').get_group(county)[['Site', 'PM25']].values.tolist()
 
 
-print(get_county_pm25('新北市'))
+def get_county():
+    countys = []
+    for county in df['county']:
+        if county not in countys:
+            countys.append(county)
+    return countys
